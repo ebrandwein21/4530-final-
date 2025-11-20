@@ -19,6 +19,8 @@ export default function S3UploadPage() {
             setMessage("please select file")
             return;
         };
+
+    };
     
     const handleDrag = (e) => {
         e.preventDefault();
@@ -35,9 +37,6 @@ export default function S3UploadPage() {
         if (e.dataTransfer.files.length > 0) {
             FileSystemWritableFileStream([...e.dataTransfer.files]);
         }
-
-    
-    
 
         setLoading(true);
         setMessage("");
@@ -58,6 +57,5 @@ export default function S3UploadPage() {
             }
 
             setLoading(false);
-        }
+        };
     };
-}
