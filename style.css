@@ -1,0 +1,37 @@
+body {
+    background: #222;
+    color: #eee;
+    font-family: Arial, sans-serif;
+    padding: 40px;
+}
+
+.upload-area {
+    width: 400px;
+    padding: 40px;
+    border: 3px dashed #888;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.upload-area:hover {
+    border-color: #fff;
+}
+
+.upload-area.active {
+    border-color: #4caf50;
+    background: #333;
+}
+
+#fileList {
+    margin-top: 20px;
+}
+
+.file-item {
+    padding: 10px;
+    background: #333;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}

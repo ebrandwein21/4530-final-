@@ -1,61 +1,35 @@
-import { useState } from "react";
-import {Button} from "@/components/ui/button";
-import { card, CardContent } from "@/components/ui/card";
-import { Upload } from "lucide-react";
+let uploadArea = document.getElementById("uploadArea");
+let fileInput = document.getElementById("fileInput");
+let fileList = document.getElementById("fileList");
 
-export default function S3UploadPage() {
-    const [file, setFile] = useState(null);
-    const [message, setMessage] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState({});
-    const [dragActive, setDragActive] = useState(false);    
+uploadArea.onclick = () => fileInput.click();
 
-    const handleFileSelection = (e) => {
-        setFile(e.target.files[0])
-    };
+fileInput.onchange = () => {
+    handleFiles(fileInput.files);
+};
 
-    const handleUpload = async => {
-        if (!file) {
-            setMessage("please select file")
-            return;
-        };
+["dragenter", "dragover", "dragleave", "drop"].forEach(event => {
+    uploadArea.addEventListener(event, e => e.preventDefault());
+});
 
-    };
-    
-    const handleDrag = (e) => {
-        e.preventDefault();
-        setDragActive(true);
-    };
+uploadArea.addEventListener("dragover", () => {
+    uploadArea.classList.add("active");
+});
 
-    const handleDragExit = () => {
-        setDragActive(false);
-    };
+uploadArea.addEventListener("dragleave", () => {
+    uploadArea.classList.remove("active");
+});
 
-    const handleDrop = (e) => {
-        e.preventDefault();
-        setDragActive(false)
-        if (e.dataTransfer.files.length > 0) {
-            FileSystemWritableFileStream([...e.dataTransfer.files]);
-        }
+uploadArea.addEventListener("drop", e => {
+    uploadArea.classList.remove("active");
+    handleFiles(e.dataTransfer.files);
+});
 
-        setLoading(true);
-        setMessage("");
-
-        try{
-            const res = await fetch("/api/get-presigned-url?filename=" + encodeURIComponent(file.name)); //change url later
-            const { url, key } = await res.json();
-
-            await fetch(url, {
-            method: "PUT",
-            body: file,
-            });
-
-            setMessage("Upload successful! File key: " + key);
-            } catch (err) {
-            console.error(err);
-            setMessage("Upload failed. Check console.");
-            }
-
-            setLoading(false);
-        };
-    };
+function handleFiles(files) {
+    for (let file of files) {
+        let item = document.createElement("div");
+        item.classList.add("file-item");
+        item.textContent = file.name + " (" + Math.round(file.size / 1024) + " KB)";
+        fileList.appendChild(item);
+    }
+}
