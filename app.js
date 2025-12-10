@@ -1,64 +1,215 @@
-let uploadArea = document.getElementById("uploadArea");
-let fileInput = document.getElementById("fileInput");
-let fileList = document.getElementById("fileList");
+const uploadArea = document.getElementById("uploadArea");
+const fileInput = document.getElementById("fileInput");
+const fileListDiv = document.getElementById("fileList");
+const uploadButton = document.getElementById("uploadBtn");
+const deleteButton = document.getElementById("deleteBtn");
+const uploadMessage = document.getElementById("uploadMessage");
+const uploadsNav = document.getElementById("uploadsNav");
+const previewNav = document.getElementById("previewNav");
+const uploadFilesPanel = document.getElementById("uploadFilesPanel");
+const uploadedFilesList = document.getElementById("uploadedFilesList");
+const totalFiles = document.getElementById("totalFiles");
+const navLinks = document.querySelectorAll(".nav-links li a");
 
-uploadArea.onclick = () => fileInput.click();
+let selectedFiles = [];
+let uploadedFiles = [];
+let previewVisible = true;
+let uploadsVisible = false;
 
-fileInput.onchange = () => {
-    handleFiles(fileInput.files);
+fileInput.onchange = () => handleFiles(fileInput.files);
+
+uploadArea.onclick = () => {
+    fileInput.value = "";
+    fileInput.click();
 };
 
 ["dragenter", "dragover", "dragleave", "drop"].forEach(event => {
     uploadArea.addEventListener(event, e => e.preventDefault());
 });
 
-uploadArea.addEventListener("dragover", () => {
-    uploadArea.classList.add("active");
-});
-
-uploadArea.addEventListener("dragleave", () => {
-    uploadArea.classList.remove("active");
-});
-
+uploadArea.addEventListener("dragover", () => uploadArea.classList.add("active"));
+uploadArea.addEventListener("dragleave", () => uploadArea.classList.remove("active"));
 uploadArea.addEventListener("drop", e => {
     uploadArea.classList.remove("active");
     handleFiles(e.dataTransfer.files);
 });
 
+function createCSVPreview(file) {
+    return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const lines = reader.result.split("\n").slice(0, 3); 
+            resolve(lines.join("<br>"));
+        };
+        reader.readAsText(file);
+    });
+}
+
 async function handleFiles(files) {
     for (let file of files) {
-        await uploadToS3(file);
+        if (!file.name.endsWith(".csv")) {
+            alert(`${file.name} is not a CSV file`);
+            continue;
+        }
+
+        if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+            alert(`${file.name} is already selected`);
+            continue;
+        }
+
+        if (uploadedFiles.some(f => f.name === file.name && f.size === file.size)) {
+            alert(`${file.name} is already uploaded`);
+            continue;
+        }
+
+        selectedFiles.push(file);
+
+        const preview = await createCSVPreview(file);
+        const item = document.createElement("div");
+        item.classList.add("file-item");
+        item.innerHTML = `
+            <div class="thumb">📄</div>
+            <div>
+                <strong>${file.name}</strong><br>
+                <small>${Math.round(file.size / 1024)} KB</small>
+                <div class="csv-preview">${preview}</div>
+            </div>
+        `;
+        
+        item.addEventListener("click", () => {
+            item.classList.toggle("selected");
+
+
+        })
+
+        fileListDiv.appendChild(item);
     }
 }
 
-async function uploadToS3(file){
-    const res = await fetch("/presign?filename=" + file.name);
-    const data = await res.json();
+function renderFiles() {
+    uploadedFilesList.innerHTML = "";
 
-    const uploadUrl = data.uploadUrl;
-    const fileUrl = data.fileUrl;
+    uploadedFiles.forEach(file => {
+        const item = document.createElement("div");
+        item.classList.add("uploaded-item");
+        item.innerHTML = `
+            <strong>${file.name}</strong>
+            <small>${(file.size / 1024).toFixed(1)} KB</small>
+            <small class="timestamp" data-time="${file.timestamp}">${file.timestamp}</small>
+        `;
 
-    const upload = await fetch(uploadUrl, {
-        method: "PUT",
-        body: file,
-        headers: {
-            "Content-Type": file.type
+        item.addEventListener("click", (e) => {
+            if (!e.target.classList.contains("timestamp")) {
+                item.classList.toggle("selected");
+            }
+        });
+
+        const ts = item.querySelector(".timestamp");
+        ts.addEventListener("click", (e) => {
+            const time = e.target.dataset.time;
+            alert(`You clicked on timestamp: ${time}`);
+            e.stopPropagation(); 
+        });
+
+        uploadedFilesList.appendChild(item);
+    });
+
+    totalFiles.textContent = uploadedFiles.length;
+}
+
+uploadButton.onclick = () => {
+    if (selectedFiles.length === 0) {
+        alert("No file has been selected");
+        return;
+    }
+
+    selectedFiles.forEach(file => {
+        uploadedFiles.push({
+            name: file.name,
+            size: file.size,
+            timestamp: new Date().toLocaleString()
+        });
+    });
+
+    renderFiles();
+
+    selectedFiles = [];
+    if (previewVisible) fileListDiv.innerHTML = "";
+
+    uploadMessage.textContent = "Files uploaded successfully!";
+    uploadMessage.style.display = "block";
+    setTimeout(() => uploadMessage.style.display = "none", 3000);
+};
+
+deleteButton.onclick = () => {
+    let anyDeleted = false;
+
+    const pendingDivs = fileListDiv.querySelectorAll(".file-item.selected");
+    pendingDivs.forEach(div => {
+        const fileName = div.querySelector("strong").textContent;
+        selectedFiles = selectedFiles.filter(f => f.name !== fileName);
+        div.remove();
+        anyDeleted = true;
+    });
+
+    const uploadedDivs = uploadedFilesList.querySelectorAll(".uploaded-item");
+    uploadedDivs.forEach(div => {
+        if (div.classList.contains("selected")) {
+            const fileName = div.querySelector("strong").textContent;
+            uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
+            div.remove();
+            anyDeleted = true;
         }
     });
-    if (upload.ok) {
-        console.log("Uploaded:", fileUrl);
-        addFileToList(file, fileUrl);
-    } else {
-        console.error("S3 Upload failed");
-    }
-}
 
-function addFileToList(file, url) {
-    let item = document.createElement("div");
-    item.classList.add("file-item");
-    item.innerHTML = `
-        <strong>${file.name}</strong> uploaded → 
-        <a href="${url}" target="_blank">view</a>
-    `;
-    fileList.appendChild(item);
-}
+    totalFiles.textContent = uploadedFiles.length;
+
+    if (!anyDeleted) {
+        alert("No file has been selected");
+    }
+};
+
+
+uploadFilesPanel.style.display = "none";
+uploadsNav.addEventListener("click", e => {
+    e.preventDefault();
+    uploadsVisible = !uploadsVisible;
+    uploadFilesPanel.style.display = uploadsVisible ? "block" : "none";
+    if (uploadsVisible) uploadFilesPanel.scrollIntoView({ behavior: "smooth" });
+});
+
+previewNav.addEventListener("click", e => {
+    e.preventDefault();
+    previewVisible = !previewVisible;
+
+    if (previewVisible) {
+        fileListDiv.innerHTML = "";
+        selectedFiles.forEach(async file => {
+            const preview = await createCSVPreview(file);
+            const item = document.createElement("div");
+            item.classList.add("file-item");
+            item.innerHTML = `
+                <div class="thumb">📄</div>
+                <div>
+                    <strong>${file.name}</strong><br>
+                    <small>${Math.round(file.size / 1024)} KB</small>
+                    <div class="csv-preview">${preview}</div>
+                </div>
+            `;
+            fileListDiv.appendChild(item);
+        });
+    } else {
+        fileListDiv.innerHTML = "";
+    }
+});
+
+navLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+        e.preventDefault()
+
+        navLinks.forEach(l => l.classList.remove("active"));
+
+        link.classList.add("active");
+
+    });
+});

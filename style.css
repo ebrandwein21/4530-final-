@@ -1,37 +1,152 @@
 body {
-    background: #222;
-    color: #eee;
-    font-family: Arial, sans-serif;
-    padding: 40px;
+  background: #222;
+  color: #eee;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding-top: 60px;
+}
+
+.navbar {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  z-index: 1000;
+}
+
+.navbar .logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+
+.nav-links li a:hover {
+  background-color: #4caf50;
 }
 
 .upload-area {
-    width: 400px;
-    padding: 40px;
-    border: 3px dashed #888;
-    border-radius: 15px;
-    text-align: center;
-    margin-bottom: 20px;
-    transition: 0.2s;
-    cursor: pointer;
+  width: 400px;
+  padding: 40px;
+  border: 3px dashed #888;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: 0.2s;
+  cursor: pointer;
 }
 
-.upload-area:hover {
-    border-color: #fff;
-}
-
-.upload-area.active {
-    border-color: #4caf50;
-    background: #333;
-}
+.upload-area:hover { border-color: #fff; }
+.upload-area.active { border-color: #4caf50; background: #333; box-shadow: 0 0 15px #4caf50; }
 
 #fileList {
-    margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 20px;
+  width: 400px;
 }
 
 .file-item {
-    padding: 10px;
-    background: #333;
-    margin-bottom: 10px;
-    border-radius: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 10px;
+  background: #333;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  gap: 10px;
+}
+
+.file-item .thumb {
+  width: 65px;
+  height: 40px;
+  background: #444;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  border-radius: 6px;
+}
+
+.csv-preview {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #bbb;
+}
+
+.uploadBtn, .deleteBtn {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 10px;
+  margin: 0px 25px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.uploadBtn { background: #eff6f0; color: #0b0000; }
+.uploadBtn:hover { background: #45a049; }
+
+.deleteBtn { background: #ebe8e8; color: #020000; }
+.deleteBtn:hover { background: #b71c1c; }
+
+.uploaded-list {
+  margin-top: 10px;
+}
+
+.uploaded-item {
+  background: #333;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 5px;
+}
+
+.upload-message {
+  margin: 10px 0;
+  font-size: 18px;
+  color: #4caf50;
+  display: none;
+}
+
+#uploadFilesPanel {
+    display: none; 
+}
+
+.nav-links li a.active {
+    background-color: #f0f8f0; 
+    color: rgb(12, 11, 11);
+}
+
+.file-item.selected {
+    border: 2px solid #4caf50;
+    background-color: #2a2a2a;
+}
+
+.uploaded-item.selected {
+    border: 2px solid #4caf50;
+    background-color: #2a2a2a;
 }
