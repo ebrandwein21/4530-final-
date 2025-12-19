@@ -8,37 +8,58 @@
 </head>
 <body>
 
-    <div class="upload-area" id="uploadArea">
-        <h2>Drag & Drop CSV Files Here</h2>
-        <p>or click to browse</p>
-        <input type="file" id="fileInput" multiple accept=".csv">
-    </div>
-
-    <div class="button-container">
-    <button id="uploadBtn" class="uploadBtn">Upload</button>
-    <button id="deleteBtn" class="deleteBtn">Delete</button>
-    </div>
-
     <nav class="navbar">
-  <div class="logo">Upload Here</div>
-  <ul class="nav-links">
-     <li><a href="#" id="previewNav">Preview</a></li>
-    <li><a href="#">Profile</a></li>
-   <li><a href="#" id="uploadsNav">Uploads</a></li>
-    <li><a href="#">Logout</a></li>
-  </ul>
-  </nav>
+        <div class="logo">Upload Here</div>
+        <ul class="nav-links">
+            <li><a href="#" id="previewNav">Preview</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#" id="uploadsNav">Uploads</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </nav>
 
-  
-    <div id="uploadMessage" class="upload-message">Upload Files</div>
+    <div class="main-wrapper">
 
-    <div id="fileList"></div>
+        <div class="upload-area" id="uploadArea">
+            <h2>Drag & Drop CSV Files Here</h2>
+            <p>or click to browse</p>
+            <input type="file" id="fileInput" multiple accept=".csv">
+        </div>
 
-    <div id="uploadFilesPanel" class="uploaded-panel">
-        <h3> Uploaded Files</h3>
-        <div id="uploadedFilesList" class="uploaded-list"></div>
-        <p>Total uploaded this session: <span id="totalFiles">0</span></p>
+        <div class="button-container">
+            <button id="uploadBtn" class="uploadBtn">Upload</button>
+            <button id="deleteBtn" class="deleteBtn">Delete</button>
+        </div>
+
+        <div id="uploadMessage" class="upload-message">Upload Files</div>
+
+        <div id="fileList"></div>
+
+        <div id="uploadFilesPanel" class="uploaded-panel">
+            <h3>Uploaded Files</h3>
+            <div id="uploadedFilesList" class="uploaded-list"></div>
+            <p>Total uploaded this session: <span id="totalFiles">0</span></p>
+        </div>
+
     </div>
+
+    <div id="loginPopup" class="popup hidden">
+        <div class="popup-content">
+            <h2>Login</h2>
+            <input type="text" id="username" placeholder="Enter your name">
+            <button id="loginBtn">Login</button>
+            <button class="closeBtn" id="closeLogin">Close</button>
+        </div>
+    </div>
+
+    <div id="profilePopup" class="popup hidden">
+        <div class="popup-content">
+            <h2>Profile</h2>
+            <p>Welcome, <span id="profileName"></span>!</p>
+            <button class="closeBtn" id="closeProfile">Close</button>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>

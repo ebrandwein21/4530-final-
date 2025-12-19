@@ -10,11 +10,20 @@ const uploadFilesPanel = document.getElementById("uploadFilesPanel");
 const uploadedFilesList = document.getElementById("uploadedFilesList");
 const totalFiles = document.getElementById("totalFiles");
 const navLinks = document.querySelectorAll(".nav-links li a");
+const loginPopup = document.getElementById("loginPopup")
+const profilePopup = document.getElementById("profilePopup");
+const loginBtn = document.getElementById("loginBtn");
+const usernameInput = document.getElementById("username");
+const profileName = document.getElementById("profileName");
+const navProfile = navLinks[1]; 
+const navLogout = navLinks[3];  
 
 let selectedFiles = [];
 let uploadedFiles = [];
 let previewVisible = true;
 let uploadsVisible = false;
+let loggedIn = false;
+let username = "";
 
 fileInput.onchange = () => handleFiles(fileInput.files);
 
@@ -79,7 +88,6 @@ async function handleFiles(files) {
         item.addEventListener("click", () => {
             item.classList.toggle("selected");
 
-
         })
 
         fileListDiv.appendChild(item);
@@ -142,31 +150,40 @@ uploadButton.onclick = () => {
 };
 
 deleteButton.onclick = () => {
-    let anyDeleted = false;
+    const selectedPending = fileListDiv.querySelectorAll(".file-item.selected")
+    const selectedUploaded = uploadedFilesList.querySelectorAll(".uploaded-item.selected");
 
-    const pendingDivs = fileListDiv.querySelectorAll(".file-item.selected");
-    pendingDivs.forEach(div => {
+    if (selectedPending.length === 0 & selectedUploaded.length === 0){
+        alert("no file selected");
+        return;
+    }
+
+    let filenames = [];
+
+    selectedPending.forEach(div => {
+        filenames.push(div.querySelector("strong").textContent);
+    });
+
+    selectedUploaded.forEach(div => {
+        filenames.push(div.querySelector("strong").textContent);
+    });
+
+    const ok = confirm(`Are you sure you want to delete:\n\n${filenames.join("\n")}`);
+    if (!ok) return
+
+    selectedPending.forEach(div => {
         const fileName = div.querySelector("strong").textContent;
         selectedFiles = selectedFiles.filter(f => f.name !== fileName);
         div.remove();
-        anyDeleted = true;
     });
 
-    const uploadedDivs = uploadedFilesList.querySelectorAll(".uploaded-item");
-    uploadedDivs.forEach(div => {
-        if (div.classList.contains("selected")) {
-            const fileName = div.querySelector("strong").textContent;
-            uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
-            div.remove();
-            anyDeleted = true;
-        }
+    selectedUploaded.forEach(div => {
+        const fileName = div.querySelector("strong").textContent;
+        uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
+        div.remove();
     });
 
     totalFiles.textContent = uploadedFiles.length;
-
-    if (!anyDeleted) {
-        alert("No file has been selected");
-    }
 };
 
 
@@ -207,9 +224,42 @@ navLinks.forEach(link => {
     link.addEventListener("click", (e) => {
         e.preventDefault()
 
+        if (link.classList.contains("active")) {
+            link.classList.remove("active");
+            return;
+        }
+
         navLinks.forEach(l => l.classList.remove("active"));
 
         link.classList.add("active");
 
     });
+});
+
+navLinks[1].addEventListener("click", (e) => {
+    e.preventDefault();
+
+    if (!loggedIn) {
+        loginPopup.classList.toggle("hidden");
+    } else {
+        profilePopup.classList.toggle("hidden");
+    }
+});
+
+loginBtn.addEventListener("click", () => {
+    username = usernameInput.value.trim();
+    if (!username) return alert("Enter a name!");
+    loggedIn = true;
+    profileName.textContent = username;
+
+    loginPopup.classList.add("hidden");
+    profilePopup.classList.remove("hidden");
+});
+
+navLogout.addEventListener("click", (e) => {
+    e.preventDefault();
+    loggedIn = false;
+    username = "";
+    profilePopup.classList.add("hidden");
+    alert("You are logged out!");
 });

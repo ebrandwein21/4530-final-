@@ -10,7 +10,15 @@ body {
   margin: 0;
   padding-top: 60px;
 }
-
+.main-wrapper {
+    width: 100%;
+    max-width: 900px;
+    margin-top: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
 .navbar {
   display: flex;
   position: fixed;
@@ -56,9 +64,21 @@ body {
   border: 3px dashed #888;
   border-radius: 15px;
   text-align: center;
-  margin-bottom: 20px;
+  background: #2b2b2b;
   transition: 0.2s;
   cursor: pointer;
+}
+
+.upload-area:hover {
+  border-color: #4caf50;
+  background: #303030;
+  transform: scale(1.02);
+}
+
+.upload-area.active {
+    border-color: #4caf50;
+    background: #262626;
+    box-shadow: 0 0 20px #4caf50;
 }
 
 .upload-area:hover { border-color: #fff; }
@@ -71,15 +91,41 @@ body {
   width: 400px;
 }
 
+#fileList, #uploadedFilesList {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 5px;
+    scrollbar-width: thin;
+}
+
+#fileList::-webkit-scrollbar,
+#uploadedFilesList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#fileList::-webkit-scrollbar-thumb,
+#uploadedFilesList::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 6px;
+}
+
+
 .file-item {
   display: flex;
+  padding: 12px;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: 10px;
+  border: 1px solid #444;
   background: #333;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  gap: 10px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  gap: 12px;
+  transition: .2s ease
+}
+
+.file-item:hover{
+  background: #3a3a3a;
+  cursor: pointer;
 }
 
 .file-item .thumb {
@@ -93,10 +139,22 @@ body {
   border-radius: 6px;
 }
 
+.file-item.selected {
+    border: 2px solid #4caf50;
+    background-color: #1f1f1f;
+}
+
+
 .csv-preview {
+  background: #1b1b1b;
   font-size: 12px;
-  margin-top: 4px;
+  margin-top: 5px;
+  border-radius:  6x;
   color: #bbb;
+  max-width: 280px;
+  white-space:  nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .uploadBtn, .deleteBtn {
@@ -133,7 +191,42 @@ body {
 }
 
 #uploadFilesPanel {
-    display: none; 
+    width: 500px;
+    background: #2e2e2e;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 25px;
+    box-shadow: 0 0 10px #111
+}
+
+.uploaded-item {
+    padding: 12px;
+    background: #262626;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #444;
+    transition: .2s;
+}
+
+.uploaded-item:hover {
+    background: #333;
+}
+
+.uploaded-item.selected {
+    border-color: #4caf50;
+    background: #1f1f1f;
+}
+
+.timestamp {
+    color: #bbb;
+    display: block;
+    margin-top: 4px;
+}
+
+.nav-links li a {
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: .2s;
 }
 
 .nav-links li a.active {
@@ -146,7 +239,44 @@ body {
     background-color: #2a2a2a;
 }
 
-.uploaded-item.selected {
-    border: 2px solid #4caf50;
-    background-color: #2a2a2a;
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.popup-content {
+    background: #333;
+    padding: 30px 40px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 300px;
+}
+
+.popup-content input {
+    padding: 10px;
+    width: 80%;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: none;
+}
+
+.popup-content button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.hidden {
+    display: none !important;
 }
