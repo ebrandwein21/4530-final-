@@ -1,5 +1,5 @@
 const uploadArea = document.getElementById("uploadArea");
-const fileInput = document.getElementById("fileInput");
+const fileTime = document.getElementById("fileInput");
 const fileListDiv = document.getElementById("fileList");
 const uploadButton = document.getElementById("uploadBtn");
 const deleteButton = document.getElementById("deleteBtn");
@@ -125,28 +125,34 @@ function renderFiles() {
     totalFiles.textContent = uploadedFiles.length;
 }
 
-uploadButton.onclick = () => {
-    if (selectedFiles.length === 0) {
-        alert("No file has been selected");
-        return;
+uploadButton.onclick = async () => {
+  if (selectedFiles.length === 0) {
+    alert("No file has been selected");
+    return;
+  }
+
+  try {
+    for (const file of selectedFiles) {
+      await uploadFile(file); 
+      uploadedFiles.push({
+        name: file.name,
+        size: file.size,
+        timestamp: new Date().toLocaleString()
+      });
     }
 
-    selectedFiles.forEach(file => {
-        uploadedFiles.push({
-            name: file.name,
-            size: file.size,
-            timestamp: new Date().toLocaleString()
-        });
-    });
-
     renderFiles();
-
     selectedFiles = [];
-    if (previewVisible) fileListDiv.innerHTML = "";
+    fileListDiv.innerHTML = "";
 
     uploadMessage.textContent = "Files uploaded successfully!";
     uploadMessage.style.display = "block";
     setTimeout(() => uploadMessage.style.display = "none", 3000);
+
+  } catch (err) {
+    console.error(err);
+    alert("Upload failed — check console");
+  }
 };
 
 deleteButton.onclick = () => {

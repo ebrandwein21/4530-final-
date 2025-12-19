@@ -1,8 +1,8 @@
 async function uploadFile(file) {
   const response = await fetch(
-    'https://vv1zh748ti.execute-api.us-east-1.amazonaws.com/upload?fileName=' +
-    encodeURIComponent(file.name)
-  );
+  'https://vv1zh748ti.execute-api.us-east-1.amazonaws.com/prod/upload?fileName=' +
+  encodeURIComponent(file.name)
+);
 
   if (!response.ok) {
     throw new Error('Failed to get pre-signed URL');
@@ -21,7 +21,7 @@ async function uploadFile(file) {
   console.log('Upload successful');
 }
 
-const fileInput = document.getElementById('file-chooser');
+const fileInput = document.getElementById('fileInput');
 fileInput.addEventListener('change', (event) => {
   const file = event.target.files[0];
   if (file) {
