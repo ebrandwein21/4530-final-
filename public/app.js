@@ -11,6 +11,10 @@ const uploadedFilesList = document.getElementById("uploadedFilesList");
 const totalFiles = document.getElementById("totalFiles");
 const navLinks = document.querySelectorAll(".nav-links li a");
 const loginPopup = document.getElementById("loginPopup")
+const editUsername = document.getElementById('editUsername');
+const editRole = document.getElementById('editRole');
+const updateProfileBtn = document.getElementById('updateProfileBtn');
+const roleSelection = document.getElementById('roleSelect');
 const profilePopup = document.getElementById("profilePopup");
 const loginBtn = document.getElementById("loginBtn");
 const usernameInput = document.getElementById("username");
@@ -268,4 +272,78 @@ navLogout.addEventListener("click", (e) => {
     username = "";
     profilePopup.classList.add("hidden");
     alert("You are logged out!");
+});
+
+loginBtn.addEventListener("click", async() => {
+    const userName = usernameInput.value.trim()
+    const password = prompt("Enter Password:")
+    const role = roleSelection.value;
+
+    if(!username || !password){
+        return alert("enter username and password");
+    }
+    try{
+        let res = await fetch('/login', {
+             method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+        });
+        if (res.status === 401) {
+      // If login fails, register user
+      res = await fetch('/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, role })
+      });
+    }
+
+    const data = await res.json()
+    localStorage.setItem('sessionToken', data.sessionToken)
+    profileName.textContent = `${data.username} (${data.role})`;
+    loginPopup.classList.add("hidden");
+    profilePopup.classList.remove("hidden");
+     } catch (err) {
+    console.error(err);
+    alert("Login/Register failed");
+  }
+});
+
+navLogout.addEventListener("click", (e) => {
+  e.preventDefault();
+  localStorage.removeItem("sessionToken");
+  profilePopup.classList.add("hidden");
+  alert("you are now logged out!");
+});
+
+// FETCH PROFILE ON OPEN
+navProfile.addEventListener("click", async () => {
+  const token = localStorage.getItem("sessionToken");
+  if (!token) {
+    loginPopup.classList.remove("hidden");
+    return;
+  }
+
+  const res = await fetch('/profile', { headers: { 'Authorization': token } });
+  const data = await res.json();
+  profileName.textContent = `${data.username} (${data.role})`;
+  profilePopup.classList.toggle("hidden");
+});
+
+updateProfileBtn.addEventListener('click', async () => {
+  const token = localStorage.getItem("sessionToken");
+  const newUsername = editUsername.value.trim();
+  const newRole = editRole.value;
+
+  const res = await fetch('/update-profile', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': token
+    },
+    body: JSON.stringify({ username: newUsername, role: newRole })
+  });
+
+  const data = await res.json();
+  profileName.textContent = `${data.username} (${data.role})`;
+  alert("Profile updated!");
 });

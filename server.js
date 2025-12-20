@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-<<<<<<< HEAD
+
 let users = [];
 
 function generateToken() {
@@ -76,17 +76,6 @@ const s3 = new AWS.S3({
 app.get('/upload', (req, res) => {
     const { fileName } = req.query;
     if (!fileName) return res.status(400).json({ error: "you are missing filename" });
-=======
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
-    region: process.env.AWS_REGION
-});
-
-app.get('/upload', (req, res) => {
-    const { fileName } = req.query;
-    if (!fileName) return res.status(400).json({ error: "Missing fileName" });
->>>>>>> e6fdf42 (express)
 
     const params = {
         Bucket: process.env.S3_BUCKET,
@@ -101,9 +90,6 @@ app.get('/upload', (req, res) => {
     });
 });
 
-<<<<<<< HEAD
+
 const PORT = process.env.PORT || 3008;
-=======
-const PORT = process.env.PORT || 3005;
->>>>>>> e6fdf42 (express)
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
