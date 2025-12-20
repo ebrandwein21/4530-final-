@@ -12,8 +12,8 @@ const totalFiles = document.getElementById("totalFiles");
 const navLinks = document.querySelectorAll(".nav-links li a");
 const loginPopup = document.getElementById("loginPopup")
 const editUsername = document.getElementById('editUsername');
-const editRole = document.getElementById('editRole');
-const updateProfileBtn = document.getElementById('updateProfileBtn');
+const editRole = document.getElementById('roleSelect');
+const updateProfileBtn = document.getElementById('updateProfileButton');
 const roleSelection = document.getElementById('roleSelect');
 const profilePopup = document.getElementById("profilePopup");
 const loginBtn = document.getElementById("loginBtn");
@@ -21,6 +21,7 @@ const usernameInput = document.getElementById("username");
 const profileName = document.getElementById("profileName");
 const navProfile = navLinks[1]; 
 const navLogout = navLinks[3];  
+const closeProfileBtn = document.getElementById("closeProfile");
 
 let selectedFiles = [];
 let uploadedFiles = [];
@@ -279,27 +280,27 @@ loginBtn.addEventListener("click", async() => {
     const password = prompt("Enter Password:")
     const role = roleSelection.value;
 
-    if(!username || !password){
+    if(!userName || !password){
         return alert("enter username and password");
     }
     try{
         let res = await fetch('/login', {
              method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ userName, password })
         });
         if (res.status === 401) {
       // If login fails, register user
       res = await fetch('/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, role })
+        body: JSON.stringify({ userName, password, role })
       });
     }
 
     const data = await res.json()
     localStorage.setItem('sessionToken', data.sessionToken)
-    profileName.textContent = `${data.username} (${data.role})`;
+    profileName.textContent = `${data.userName} (${data.role})`;
     loginPopup.classList.add("hidden");
     profilePopup.classList.remove("hidden");
      } catch (err) {
@@ -344,6 +345,10 @@ updateProfileBtn.addEventListener('click', async () => {
   });
 
   const data = await res.json();
-  profileName.textContent = `${data.username} (${data.role})`;
+  profileName.textContent = `${data.userName} (${data.role})`;
   alert("Profile updated!");
+});
+
+closeProfileBtn.addEventListener("click", () => {
+  profilePopup.classList.add("hidden");
 });
