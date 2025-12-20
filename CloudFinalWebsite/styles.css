@@ -1,0 +1,144 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f5f5;
+  color: #222;
+}
+
+.header {
+  background: #0b3d91;
+  color: #fff;
+  padding: 1rem 2rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 2rem 2rem;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.column-left {
+  flex: 1 1 320px;
+  max-width: 400px;
+}
+
+.column-right {
+  flex: 2 1 480px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 1.2rem;
+  color: #0b3d91;
+}
+
+.form-group {
+  margin-bottom: 0.75rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.radio-group {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.btn {
+  display: inline-block;
+  background: #0b3d91;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #0a347b;
+}
+
+.status {
+  min-height: 80px;
+  background: #fafafa;
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.status-success {
+  border: 1px solid #36a536;
+}
+
+.status-error {
+  border: 1px solid #c0392b;
+  color: #c0392b;
+}
+
+iframe {
+  width: 100%;
+  min-height: 350px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.footer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #666;
+  padding: 0.5rem 0 1rem;
+}

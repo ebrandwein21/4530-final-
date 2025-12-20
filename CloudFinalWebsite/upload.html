@@ -1,0 +1,30 @@
+<form id="upload-form">
+  <label>Player ID: <input name="playerId" required></label>
+  <label>CSV File: <input type="file" id="csvFile" accept=".csv" required></label>
+  <button type="submit">Upload</button>
+</form>
+<pre id="status"></pre>
+<script>
+document.getElementById('upload-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const file = document.getElementById('csvFile').files[0];
+  const playerId = e.target.playerId.value;
+
+  const url = 'https://YOUR_API_ID.execute-api.YOUR_REGION.amazonaws.com/prod/upload';
+
+  // Simplest: use a presigned URL pattern or base64; for class demo, you can send JSON metadata
+  const body = {
+    playerId,
+    fileName: file.name
+    // You can also read the file client-side and send content if you want
+  };
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body),
+  });
+
+  document.getElementById('status').textContent = await res.text();
+});
+</script>
