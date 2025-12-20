@@ -19,11 +19,3 @@ async function uploadFile(file) {
 
   console.log('Upload successful');
 }
-
-const fileInput = document.getElementById('fileInput');
-fileInput.addEventListener('change', (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    uploadFile(file).catch(console.error);
-  }
-});
